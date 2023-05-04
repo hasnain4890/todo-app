@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import "./App.css";
+import { useEffect } from "react";
 // import AllTodos from "./AllTodos";
 
-function TodoInput({ addTodo, todoList }) {
+function TodoInput({ addTodo, todoList, editItem }) {
   const [inputText, setInputText] = useState("");
+
+  useEffect(() => {
+    if (editItem) {
+      setInputText(editItem.content);
+    }
+  }, [editItem]);
 
   return (
     <>
@@ -25,7 +32,7 @@ function TodoInput({ addTodo, todoList }) {
             }}
             className="btn"
           >
-            Add
+            {editItem ? "modify" : "Add"}
           </button>
         </div>
         {/* <AllTodos todoList={todoList} /> */}

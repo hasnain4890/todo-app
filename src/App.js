@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import TodoInput from "./TodoInput";
+import { v4 as uuidv4 } from "uuid";
 import AllTodos from "./AllTodos";
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     return localState;
   });
   const [editItem, setEditItem] = useState(null);
+  const [isEditItem, setIsEditItem] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("data", JSON.stringify(todoList));
@@ -25,7 +27,19 @@ function App() {
   // }, []);
 
   const addTodo = (inputText) => {
-    if (inputText !== "") setTodoList([...todoList, inputText]);
+    if (inputText !== "" && isEditItem === false) {
+      const _id = uuidv4();
+      setTodoList([...todoList, { content: inputText, _id }]);
+    } else if (inputText !== "" && isEditItem) {
+      setTodoList(
+        todoList.map((el) => {
+          if (el._id === editItem._id) {
+            return { ...el, content: inputText };
+          }
+          return el;
+        })
+      );
+    }
   };
 
   const deleteTodo = (key) => {
@@ -36,12 +50,13 @@ function App() {
 
   const handleEditClick = (id) => {
     console.log(id);
+    setIsEditItem(true);
     setEditItem(id);
   };
 
   return (
     <div className="App">
-      <TodoInput addTodo={addTodo} todoList={todoList} />
+      <TodoInput addTodo={addTodo} todoList={todoList} editItem={editItem} />
       <h2>Todo-Listing</h2>
       <hr />
 
